@@ -1,0 +1,57 @@
+"use strict";
+
+const seedData = {
+  adminUsers: [
+    {
+      id: "admin-1",
+      username: "admin",
+      password: "rg1234",
+      name: "RG Admin"
+    }
+  ],
+  store: {
+    name: "RG Store",
+    tagline: "Quality Agricultural Hand Tools",
+    phone: ["7209979197", "9241823652"],
+    email: "gope7792@gmail.com",
+    whatsapp: "917209979197",
+    shippingFree: 2000
+  },
+  categories: [
+    { id: "hammer", name: "Hammers", emoji: "🔨" },
+    { id: "pickaxe", name: "Pick Axe", emoji: "⛏️" },
+    { id: "shovel", name: "Shovels", emoji: "🪣" },
+    { id: "crowbar", name: "Crow Bar", emoji: "🪛" },
+    { id: "powrah", name: "Powrah/Hoe", emoji: "🌾" },
+    { id: "blade", name: "Blades", emoji: "🚜" }
+  ],
+  coupons: [
+    { id: "c1", code: "WELCOME10", type: "percent", value: 10, minOrder: 500, active: true, uses: 12, desc: "10% off for new customers" },
+    { id: "c2", code: "FLAT100", type: "flat", value: 100, minOrder: 1000, active: true, uses: 5, desc: "Rs 100 flat off on orders above Rs 1000" },
+    { id: "c3", code: "SUMMER20", type: "percent", value: 20, minOrder: 800, active: false, uses: 0, desc: "Summer sale - 20% off" }
+  ],
+  products: [
+    { id: 1, name: "RG Hammer 2 LB with Handle", cat: "hammer", emoji: "🔨", image: "", price: 299, mrp: 450, brand: "RG", weight: "2 LB", material: "Carbon Steel", size: "2 LB", tag: "Best Seller", stock: true, desc: "Heavy duty hammer with wooden handle.", specs: [["Weight", "2 LB"], ["Material", "Carbon Steel"], ["Handle", "Fitted"], ["Brand", "RG"]], rating: 4.5, reviews: 128 },
+    { id: 2, name: "RG Hammer 5 LB with Handle", cat: "hammer", emoji: "🔨", image: "", price: 380, mrp: 550, brand: "RG", weight: "5 LB", material: "Carbon Steel", size: "5 LB", tag: "", stock: true, desc: "Heavy 5 LB hammer for tough jobs.", specs: [["Weight", "5 LB"], ["Brand", "RG"]], rating: 4.2, reviews: 84 },
+    { id: 3, name: "RG Pick Axe 1.8 KG", cat: "pickaxe", emoji: "⛏️", image: "", price: 380, mrp: 550, brand: "RG", weight: "1.8 KG", material: "Alloy Steel", size: "1.8 KG", tag: "New", stock: true, desc: "Pick axe for agriculture and demolition.", specs: [["Weight", "1.8 KG"], ["Colors", "Black/Red/Blue"], ["Brand", "RG"]], rating: 4.6, reviews: 57 },
+    { id: 4, name: "RG Pick Axe 3.0 KG", cat: "pickaxe", emoji: "⛏️", image: "", price: 520, mrp: 750, brand: "RG", weight: "3.0 KG", material: "Alloy Steel", size: "3.0 KG", tag: "", stock: true, desc: "Heavy duty 3 KG pick axe.", specs: [["Weight", "3.0 KG"], ["Brand", "RG"]], rating: 4.4, reviews: 43 },
+    { id: 5, name: "RG Shovel D-Handle 2.2 KG", cat: "shovel", emoji: "🪣", image: "", price: 650, mrp: 900, brand: "RG", weight: "2.2 KG", material: "Steel", size: "Full Size", tag: "Best Seller", stock: true, desc: "Premium RG shovel with D-handle.", specs: [["Weight", "2.2 KG"], ["Handle", "D-Handle"], ["Brand", "RG"]], rating: 4.7, reviews: 201 },
+    { id: 6, name: "RG Crow Bar 25 MM", cat: "crowbar", emoji: "🪛", image: "", price: 280, mrp: 400, brand: "RG", weight: "2.5 KG", material: "Carbon Steel", size: "25 MM", tag: "", stock: true, desc: "Solid crow bar for prying and demolition.", specs: [["Size", "25 MM"], ["Brand", "RG"]], rating: 4.3, reviews: 66 },
+    { id: 7, name: "RG Powrah 2.5 LB", cat: "powrah", emoji: "🌾", image: "", price: 180, mrp: 260, brand: "RG", weight: "1.14 KG", material: "Steel", size: "2.5 LB", tag: "", stock: true, desc: "Traditional Indian agricultural hoe.", specs: [["Weight", "2.5 LB"], ["Brand", "RG"]], rating: 4.4, reviews: 95 },
+    { id: 8, name: "TEZ Rotavator Blade 57 MM", cat: "blade", emoji: "🚜", image: "", price: 890, mrp: 1200, brand: "TEZ", weight: "Per Set", material: "High Carbon Steel", size: "57 MM", tag: "Wholesale", stock: true, desc: "Rotavator blades for tractor tillage.", specs: [["Centre", "57 MM"], ["Hole", "14.5 MM"], ["Brand", "TEZ"]], rating: 4.6, reviews: 110 }
+  ],
+  customers: [
+    { id: "CUS001", name: "Ramesh Kumar", phone: "9876543210", email: "ramesh@gmail.com", city: "Jamshedpur", joined: "2025-03-15", orders: 3, totalSpent: 2318, lastOrder: "2025-04-10", password: "demo123", wishlist: [1], cart: [] },
+    { id: "CUS002", name: "Sunita Devi", phone: "9123456780", email: "", city: "Bokaro", joined: "2025-03-22", orders: 1, totalSpent: 440, lastOrder: "2025-04-11", password: "demo123", wishlist: [], cart: [] },
+    { id: "CUS003", name: "Mohan Prasad", phone: "9988776655", email: "mohan@yahoo.com", city: "Dhanbad", joined: "2025-04-01", orders: 2, totalSpent: 2540, lastOrder: "2025-04-12", password: "demo123", wishlist: [], cart: [] }
+  ],
+  orders: [
+    { id: "RGO-1001", customerId: "CUS001", customer: "Ramesh Kumar", phone: "9876543210", email: "ramesh@gmail.com", address: "12 Gandhi Nagar, Jamshedpur, Jharkhand 831001", items: [{ productId: 1, name: "RG Hammer 2 LB", qty: 2, price: 299 }, { productId: 6, name: "RG Crow Bar 25MM", qty: 1, price: 280 }], subtotal: 878, shipping: 0, discount: 0, total: 878, payMethod: "COD", payStatus: "pending", status: "delivered", date: "2025-04-10", note: "Please pack carefully." },
+    { id: "RGO-1002", customerId: "CUS002", customer: "Sunita Devi", phone: "9123456780", email: "", address: "45 Steel Road, Bokaro, Jharkhand 827001", items: [{ productId: 3, name: "RG Pick Axe 1.8 KG", qty: 1, price: 380 }], subtotal: 380, shipping: 60, discount: 0, total: 440, payMethod: "UPI", payStatus: "paid", status: "shipped", date: "2025-04-11", note: "" },
+    { id: "RGO-1003", customerId: "CUS003", customer: "Mohan Prasad", phone: "9988776655", email: "mohan@yahoo.com", address: "7 Kali Mandir Lane, Dhanbad, Jharkhand 826001", items: [{ productId: 5, name: "RG Shovel D-Handle 2.2KG", qty: 2, price: 650 }, { productId: 7, name: "RG Powrah 2.5 LB", qty: 3, price: 180 }], subtotal: 1840, shipping: 0, discount: 100, total: 1740, payMethod: "COD", payStatus: "pending", status: "processing", date: "2025-04-12", note: "Call before delivery." }
+  ],
+  sessions: [],
+  otpRequests: []
+};
+
+module.exports = { seedData };

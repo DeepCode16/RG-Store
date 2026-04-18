@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RG Store — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Hind:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#E85D04;--primary-dark:#C44D00;--primary-light:#FFF3ED;--blue:#1565C0;--blue-light:#E3F2FD;--green:#2E7D32;--green-light:#E8F5E9;--red:#C62828;--red-light:#FFEBEE;--sidebar:#1C1C2E;--bg:#F5F5F5;--text:#212121;--text2:#555;--text3:#888;--border:#E0E0E0;--shadow:0 2px 12px rgba(0,0,0,0.09);--radius:8px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Hind',sans-serif;background:var(--bg);color:var(--text);}
+h1,h2,h3,h4{font-family:'Baloo 2',sans-serif;}
+button{cursor:pointer;font-family:'Hind',sans-serif;}
+input,select,textarea{font-family:'Hind',sans-serif;}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1C1C2E,#E85D04);padding:20px;}
+.login-card{background:#fff;border-radius:14px;width:100%;max-width:380px;padding:36px 32px;box-shadow:0 10px 40px rgba(0,0,0,.25);}
+.login-logo{font-family:'Baloo 2',sans-serif;font-size:1.8rem;font-weight:800;color:var(--primary);text-align:center;margin-bottom:4px;}
+.login-logo span{color:var(--blue);}
+.login-sub{text-align:center;color:var(--text3);font-size:.85rem;margin-bottom:24px;}
+.lg{margin-bottom:16px;}
+.lg label{display:block;font-size:.78rem;font-weight:600;color:var(--text2);margin-bottom:5px;}
+.lg input{width:100%;border:1.5px solid var(--border);border-radius:6px;padding:11px 14px;font-size:.95rem;outline:none;transition:border-color .15s;}
+.lg input:focus{border-color:var(--primary);}
+.login-btn{width:100%;background:var(--primary);color:#fff;border:none;padding:13px;border-radius:6px;font-weight:700;font-size:1rem;}
+.login-hint{text-align:center;font-size:.75rem;color:var(--text3);margin-top:12px;}
+.app{display:none;height:100vh;overflow:hidden;}
+.app.active{display:flex;}
+.sidebar{width:220px;flex-shrink:0;background:var(--sidebar);display:flex;flex-direction:column;height:100vh;overflow-y:auto;}
+.sb-brand{padding:20px 18px 16px;font-family:'Baloo 2',sans-serif;font-size:1.2rem;font-weight:800;color:var(--primary);border-bottom:1px solid rgba(255,255,255,.07);}
+.sb-brand span{color:#90CAF9;}
+.sb-section{font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.3);padding:16px 18px 6px;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:11px 18px;font-size:.88rem;font-weight:500;color:rgba(255,255,255,.65);cursor:pointer;border-left:3px solid transparent;transition:background .13s,color .13s;}
+.sb-item:hover{background:rgba(255,255,255,.06);color:#fff;}
+.sb-item.active{background:rgba(232,93,4,.18);color:var(--primary);border-left-color:var(--primary);}
+.sb-item .si{font-size:1.1rem;width:22px;text-align:center;}
+.sb-bottom{margin-top:auto;padding:14px 18px;border-top:1px solid rgba(255,255,255,.07);}
+.sb-out{display:flex;align-items:center;gap:8px;font-size:.85rem;color:rgba(255,255,255,.4);cursor:pointer;}
+.sb-out:hover{color:var(--red);}
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:var(--shadow);}
+.topbar h2{font-size:1.2rem;font-weight:700;}
+.tb-right{display:flex;align-items:center;gap:12px;}
+.tb-av{width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1rem;}
+.content{padding:24px;flex:1;}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;margin-bottom:24px;}
+.stat-card{background:#fff;border-radius:var(--radius);padding:20px 18px;box-shadow:var(--shadow);border-top:3px solid var(--primary);}
+.stat-card.b{border-top-color:var(--blue);}.stat-card.g{border-top-color:var(--green);}.stat-card.r{border-top-color:var(--red);}
+.si2{font-size:1.6rem;margin-bottom:6px;}
+.sv{font-family:'Baloo 2',sans-serif;font-size:1.7rem;font-weight:800;}
+.sl{font-size:.78rem;color:var(--text3);}
+.sec-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px;}
+.sec-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.sec-head h3{font-family:'Baloo 2',sans-serif;font-size:1rem;font-weight:700;}
+.btn{padding:9px 18px;border-radius:5px;font-weight:600;font-size:.85rem;border:none;transition:background .15s;}
+.btn-p{background:var(--primary);color:#fff;}.btn-p:hover{background:var(--primary-dark);}
+.btn-o{background:none;border:1.5px solid var(--border);color:var(--text2);}.btn-o:hover{border-color:var(--primary);color:var(--primary);}
+.btn-d{background:var(--red-light);color:var(--red);border:1px solid var(--red);}.btn-d:hover{background:var(--red);color:#fff;}
+.btn-sm{padding:5px 12px;font-size:.78rem;}
+.fbar{display:flex;gap:10px;flex-wrap:wrap;padding:14px 20px;border-bottom:1px solid var(--border);background:#fafafa;}
+.fbar input,.fbar select{border:1.5px solid var(--border);border-radius:5px;padding:8px 12px;font-size:.85rem;outline:none;background:#fff;color:var(--text);}
+.fbar input:focus,.fbar select:focus{border-color:var(--primary);}
+.fbar input{flex:1;min-width:180px;}
+.ptable{width:100%;border-collapse:collapse;font-size:.85rem;}
+.ptable th{background:#f5f5f5;padding:11px 14px;text-align:left;font-weight:700;font-size:.75rem;text-transform:uppercase;color:var(--text3);border-bottom:2px solid var(--border);white-space:nowrap;}
+.ptable td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.ptable tr:last-child td{border-bottom:none;}
+.ptable tr:hover td{background:#fafafa;}
+.tbl-img{width:52px;height:52px;border-radius:6px;object-fit:cover;border:1px solid var(--border);}
+.tbl-ph{width:52px;height:52px;border-radius:6px;background:#f0f4f8;display:flex;align-items:center;justify-content:center;font-size:1.6rem;border:1px solid var(--border);}
+.pname{font-weight:600;max-width:180px;line-height:1.3;}
+.btag{display:inline-block;font-size:.68rem;font-weight:700;padding:1px 6px;border-radius:2px;margin-left:4px;background:var(--blue-light);color:var(--blue);}
+.pc{font-family:'Baloo 2',sans-serif;font-weight:700;}
+.cb{display:inline-block;padding:2px 8px;border-radius:3px;font-size:.72rem;font-weight:700;background:var(--primary-light);color:var(--primary);}
+.sb{padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700;}
+.si-badge{background:var(--green-light);color:var(--green);}.so-badge{background:var(--red-light);color:var(--red);}
+.ni-badge{background:var(--red-light);color:var(--red);font-size:.68rem;font-weight:700;padding:1px 6px;border-radius:3px;}
+.hi-badge{background:var(--green-light);color:var(--green);font-size:.68rem;font-weight:700;padding:1px 6px;border-radius:3px;}
+.bulk-bar{display:none;background:var(--primary);color:#fff;padding:10px 20px;align-items:center;gap:14px;font-size:.88rem;font-weight:600;}
+.bulk-bar.show{display:flex;}
+.bulk-bar button{background:rgba(255,255,255,.2);border:none;color:#fff;padding:6px 14px;border-radius:4px;font-size:.82rem;font-weight:600;cursor:pointer;}
+.foverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:900;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
+.foverlay.open{display:flex;}
+.fmodal{background:#fff;border-radius:12px;width:100%;max-width:640px;padding:28px;box-shadow:0 10px 50px rgba(0,0,0,.2);animation:up .25s ease;margin:auto;}
+@keyframes up{from{transform:translateY(24px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.fmodal h3{font-family:'Baloo 2',sans-serif;font-size:1.2rem;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.xbtn{background:none;border:none;font-size:1.5rem;color:var(--text3);line-height:1;cursor:pointer;}
+.fg{margin-bottom:14px;}
+.fg label{display:block;font-size:.78rem;font-weight:600;color:var(--text2);margin-bottom:5px;}
+.fg input,.fg select,.fg textarea{width:100%;border:1.5px solid var(--border);border-radius:5px;padding:10px 12px;font-size:.9rem;outline:none;transition:border-color .15s;background:#fff;color:var(--text);}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--primary);}
+.fg textarea{resize:vertical;min-height:80px;}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.factions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
+
+/* IMAGE UPLOAD */
+.img-box{border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;transition:border-color .2s,background .2s;background:#fafafa;}
+.img-box:hover{border-color:var(--primary);}
+.img-box.has-img{border-style:solid;border-color:var(--green);background:var(--green-light);}
+.img-preview{width:130px;height:130px;border-radius:10px;object-fit:cover;border:2px solid var(--green);margin-bottom:8px;}
+.img-remove-btn{display:block;margin:0 auto 10px;background:var(--red);color:#fff;border:none;border-radius:20px;padding:4px 14px;font-size:.78rem;font-weight:700;cursor:pointer;}
+.img-title{font-weight:700;font-size:.95rem;margin-bottom:4px;}
+.img-sub{font-size:.78rem;color:var(--text3);margin-bottom:14px;}
+.img-methods{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.img-mbtn{padding:9px 16px;border-radius:6px;font-size:.82rem;font-weight:600;border:1.5px solid var(--border);background:#fff;color:var(--text2);transition:all .15s;cursor:pointer;}
+.img-mbtn:hover,.img-mbtn.active{border-color:var(--primary);color:var(--primary);background:var(--primary-light);}
+.url-wrap{display:none;margin-top:12px;}
+.url-wrap.open{display:block;}
+.url-row{display:flex;gap:8px;}
+.url-row input{flex:1;border:1.5px solid var(--border);border-radius:5px;padding:9px 12px;font-size:.85rem;outline:none;}
+.url-row input:focus{border-color:var(--primary);}
+.url-row button{background:var(--primary);color:#fff;border:none;padding:9px 16px;border-radius:5px;font-size:.85rem;font-weight:600;cursor:pointer;}
+.howto{background:var(--blue-light);border:1px solid #90CAF9;border-radius:8px;padding:14px 16px;margin-top:12px;font-size:.83rem;}
+.howto h4{font-family:'Baloo 2',sans-serif;font-size:.9rem;margin-bottom:8px;color:var(--blue);}
+.hs{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;}
+.hn{width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;font-size:.68rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+
+/* PRICE PREVIEW */
+.pp{background:var(--primary-light);border-radius:6px;padding:12px 14px;margin-top:10px;display:none;gap:20px;align-items:center;flex-wrap:wrap;}
+.pp.show{display:flex;}
+.ppi{text-align:center;}
+.ppv{font-family:'Baloo 2',sans-serif;font-size:1.1rem;font-weight:700;color:var(--primary);}
+.ppl{font-size:.7rem;color:var(--text3);}
+
+/* SPECS */
+.specs-list{display:flex;flex-direction:column;gap:8px;margin-bottom:8px;}
+.spec-row{display:flex;gap:8px;align-items:center;}
+.spec-row input{flex:1;border:1.5px solid var(--border);border-radius:4px;padding:7px 10px;font-size:.85rem;outline:none;}
+.spec-row input:focus{border-color:var(--primary);}
+.sr-btn{background:none;border:none;color:var(--red);font-size:1.1rem;padding:0 4px;cursor:pointer;}
+.add-spec{background:none;border:1.5px dashed var(--border);border-radius:4px;padding:7px;font-size:.8rem;color:var(--text3);width:100%;cursor:pointer;}
+.add-spec:hover{border-color:var(--primary);color:var(--primary);}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#212121;color:#fff;padding:12px 20px;border-radius:6px;font-size:.88rem;font-weight:500;opacity:0;transform:translateY(10px);transition:opacity .3s,transform .3s;z-index:9999;pointer-events:none;max-width:340px;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+/* CONFIRM */
+.cov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center;}
+.cov.open{display:flex;}
+.cbox{background:#fff;border-radius:10px;padding:28px;max-width:360px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.2);}
+.cbox h4{font-family:'Baloo 2',sans-serif;font-size:1.1rem;margin-bottom:8px;}
+.cbox p{font-size:.88rem;color:var(--text2);margin-bottom:20px;}
+.cactions{display:flex;gap:10px;justify-content:flex-end;}
+
+.small{font-size:.78rem;color:var(--text3);}
+.mt4{margin-top:4px;}
+
+/* ── ORDER STATUS BADGES ── */
+.os-pending{background:#FFF8E1;color:#F9A825;border:1px solid #F9A825;}
+.os-processing{background:#E3F2FD;color:#1565C0;border:1px solid #1565C0;}
+.os-shipped{background:#EDE7F6;color:#6A1B9A;border:1px solid #6A1B9A;}
+.os-delivered{background:var(--green-light);color:var(--green);border:1px solid var(--green);}
+.os-cancelled{background:var(--red-light);color:var(--red);border:1px solid var(--red);}
+.os-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700;}
+
+/* ── PAYMENT BADGES ── */
+.ps-paid{background:var(--green-light);color:var(--green);border:1px solid var(--green);}
+.ps-pending{background:#FFF8E1;color:#F9A825;border:1px solid #F9A825;}
+.ps-refunded{background:var(--blue-light);color:var(--blue);border:1px solid var(--blue);}
+.ps-failed{background:var(--red-light);color:var(--red);border:1px solid var(--red);}
+.ps-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700;}
+
+/* ── ORDER TIMELINE ── */
+.timeline{padding:14px 0;}
+.tl-step{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px;}
+.tl-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;margin-top:2px;}
+.tl-dot.done{background:var(--green);color:#fff;}
+.tl-dot.active{background:var(--primary);color:#fff;}
+.tl-dot.idle{background:#eee;color:#aaa;}
+.tl-info strong{font-size:.88rem;display:block;}
+.tl-info span{font-size:.78rem;color:var(--text3);}
+.tl-line{width:2px;background:var(--border);margin:0 13px;height:14px;}
+
+/* ── ORDER DETAIL MODAL ── */
+.od-section{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+.od-section:last-child{border-bottom:none;margin-bottom:0;}
+.od-section h4{font-family:'Baloo 2',sans-serif;font-size:.92rem;font-weight:700;margin-bottom:10px;color:var(--text2);}
+.od-row{display:flex;justify-content:space-between;font-size:.85rem;padding:4px 0;}
+.od-row span:first-child{color:var(--text3);}
+.od-total{font-size:1rem;font-weight:700;color:var(--primary);}
+
+/* ── ANALYTICS ── */
+.an-bar-wrap{display:flex;flex-direction:column;gap:10px;}
+.an-bar-row{display:flex;align-items:center;gap:10px;font-size:.82rem;}
+.an-bar-label{min-width:140px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.an-bar-track{flex:1;background:#f0f0f0;border-radius:4px;height:18px;overflow:hidden;}
+.an-bar-fill{height:100%;border-radius:4px;background:var(--primary);transition:width .6s ease;}
+.an-bar-val{min-width:60px;text-align:right;font-weight:700;font-size:.8rem;}
+.rev-summary{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;margin-bottom:20px;}
+.rev-card{background:#fff;border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);text-align:center;}
+.rev-card .rv{font-family:'Baloo 2',sans-serif;font-size:1.5rem;font-weight:800;color:var(--primary);}
+.rev-card .rl{font-size:.75rem;color:var(--text3);margin-top:2px;}
+
+/* ── COUPON ── */
+.coupon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;padding:20px;}
+.coup-card{border:2px dashed var(--border);border-radius:10px;padding:16px;position:relative;}
+.coup-code{font-family:'Baloo 2',sans-serif;font-size:1.3rem;font-weight:800;color:var(--primary);letter-spacing:2px;margin-bottom:4px;}
+.coup-desc{font-size:.78rem;color:var(--text3);margin-bottom:10px;}
+.coup-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:700;background:var(--green-light);color:var(--green);}
+.coup-badge.inactive{background:var(--red-light);color:var(--red);}
+
+/* ── CUSTOMER ── */
+.cust-av{width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem;flex-shrink:0;}
+
+/* ── MINI CHART ── */
+.mchart{display:flex;align-items:flex-end;gap:4px;height:60px;padding:0 4px;}
+.mbar{flex:1;border-radius:3px 3px 0 0;background:var(--primary);opacity:.7;min-height:4px;transition:opacity .2s;}
+.mbar:hover{opacity:1;}
+
+@media(max-width:700px){.sidebar{display:none;}.stats-row{grid-template-columns:1fr 1fr;}.fr2,.fr3{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+<div class="cov" id="cov"><div class="cbox"><h4 id="ctitle"></h4><p id="cmsg"></p><div class="cactions"><button class="btn btn-o" onclick="closeCov()">Cancel</button><button class="btn btn-d" id="cok">Confirm</button></div></div></div>
+<div class="foverlay" id="fov"><div class="fmodal"><h3 id="ftitle">Form <button class="xbtn" onclick="closeForm()">×</button></h3><div id="fbody"></div></div></div>
+
+<!-- LOGIN -->
+<div id="loginPage">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo"><span>RG</span> Admin</div>
+      <div class="login-sub">Store Management Panel</div>
+      <div class="lg"><label>Username</label><input id="lu" value="admin"></div>
+      <div class="lg"><label>Password</label><input type="password" id="lp" value="rg1234"></div>
+      <button class="login-btn" onclick="doLogin()">Login to Panel</button>
+      <div class="login-hint">Default: admin / rg1234</div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+  <div class="sidebar">
+    <div class="sb-brand"><span>RG</span> Admin</div>
+    <div class="sb-section">Main</div>
+    <div class="sb-item active" onclick="go('dashboard')"><span class="si">📊</span>Dashboard</div>
+    <div class="sb-item" onclick="go('products')"><span class="si">📦</span>Products</div>
+    <div class="sb-item" onclick="go('orders')"><span class="si">📋</span>Orders</div>
+    <div class="sb-item" onclick="go('customers')"><span class="si">👥</span>Customers</div>
+    <div class="sb-section">Finance</div>
+    <div class="sb-item" onclick="go('payments')"><span class="si">💳</span>Payments</div>
+    <div class="sb-item" onclick="go('coupons')"><span class="si">🎟️</span>Coupons</div>
+    <div class="sb-item" onclick="go('analytics')"><span class="si">📈</span>Analytics</div>
+    <div class="sb-section">Settings</div>
+    <div class="sb-item" onclick="go('store')"><span class="si">🏪</span>Store Info</div>
+    <div class="sb-item" onclick="go('cats')"><span class="si">🏷️</span>Categories</div>
+    <div class="sb-bottom"><div class="sb-out" onclick="doLogout()">🚪 Logout</div></div>
+  </div>
+  <div class="main">
+    <div class="topbar">
+      <h2 id="ttitle">Dashboard</h2>
+      <div class="tb-right">
+        <div style="font-size:.78rem;color:var(--text3)" id="savedAt"></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:.85rem;font-weight:600;color:var(--text2)"><div class="tb-av">A</div>Admin</div>
+      </div>
+    </div>
+    <div class="content" id="mc"></div>
+  </div>
+</div>
+
+<script>
+// ════════ DATA ════════
+// ════════ SAMPLE DATA ════════
+const DORDERS=[
+  {id:'RGO-1001',customer:'Ramesh Kumar',phone:'9876543210',email:'ramesh@gmail.com',address:'12 Gandhi Nagar, Jamshedpur, Jharkhand 831001',items:[{name:'RG Hammer 2 LB',qty:2,price:299},{name:'RG Crow Bar 25MM',qty:1,price:280}],subtotal:878,shipping:0,discount:0,total:878,payMethod:'COD',payStatus:'pending',status:'delivered',date:'2025-04-10',note:'Please pack carefully.'},
+  {id:'RGO-1002',customer:'Sunita Devi',phone:'9123456780',email:'',address:'45 Steel Road, Bokaro, Jharkhand 827001',items:[{name:'RG Pick Axe 1.8 KG',qty:1,price:380}],subtotal:380,shipping:60,discount:0,total:440,payMethod:'UPI',payStatus:'paid',status:'shipped',date:'2025-04-11',note:''},
+  {id:'RGO-1003',customer:'Mohan Prasad',phone:'9988776655',email:'mohan@yahoo.com',address:'7 Kali Mandir Lane, Dhanbad, Jharkhand 826001',items:[{name:'RG Shovel D-Handle 2.2KG',qty:2,price:650},{name:'RG Powrah 2.5 LB',qty:3,price:180}],subtotal:1840,shipping:0,discount:100,total:1740,payMethod:'COD',payStatus:'pending',status:'processing',date:'2025-04-12',note:'Call before delivery.'},
+  {id:'RGO-1004',customer:'Anita Singh',phone:'8765432190',email:'anita@gmail.com',address:'33 Raja Road, Ranchi, Jharkhand 834001',items:[{name:'TEZ Rotavator Blade 57MM',qty:1,price:890}],subtotal:890,shipping:100,discount:0,total:990,payMethod:'Card',payStatus:'paid',status:'pending',date:'2025-04-13',note:''},
+  {id:'RGO-1005',customer:'Vijay Tiwari',phone:'9654321870',email:'',address:'88 Mining Colony, Hazaribagh, Jharkhand 825301',items:[{name:'RG Hammer 5 LB',qty:1,price:380},{name:'RG Pick Axe 3.0 KG',qty:1,price:520}],subtotal:900,shipping:0,discount:50,total:850,payMethod:'UPI',payStatus:'paid',status:'delivered',date:'2025-04-08',note:''},
+  {id:'RGO-1006',customer:'Priya Sharma',phone:'9321654870',email:'priya@gmail.com',address:'5 New Town, Jamshedpur, Jharkhand 831002',items:[{name:'RG Crow Bar 25MM',qty:2,price:280}],subtotal:560,shipping:60,discount:0,total:620,payMethod:'COD',payStatus:'pending',status:'cancelled',date:'2025-04-09',note:'Customer cancelled.'},
+];
+const DCUSTOMERS=[
+  {id:'CUS001',name:'Ramesh Kumar',phone:'9876543210',email:'ramesh@gmail.com',city:'Jamshedpur',joined:'2025-03-15',orders:3,totalSpent:2318,lastOrder:'2025-04-10'},
+  {id:'CUS002',name:'Sunita Devi',phone:'9123456780',email:'',city:'Bokaro',joined:'2025-03-22',orders:1,totalSpent:440,lastOrder:'2025-04-11'},
+  {id:'CUS003',name:'Mohan Prasad',phone:'9988776655',email:'mohan@yahoo.com',city:'Dhanbad',joined:'2025-04-01',orders:2,totalSpent:2540,lastOrder:'2025-04-12'},
+  {id:'CUS004',name:'Anita Singh',phone:'8765432190',email:'anita@gmail.com',city:'Ranchi',joined:'2025-04-05',orders:1,totalSpent:990,lastOrder:'2025-04-13'},
+  {id:'CUS005',name:'Vijay Tiwari',phone:'9654321870',email:'',city:'Hazaribagh',joined:'2025-03-30',orders:2,totalSpent:1700,lastOrder:'2025-04-08'},
+  {id:'CUS006',name:'Priya Sharma',phone:'9321654870',email:'priya@gmail.com',city:'Jamshedpur',joined:'2025-04-09',orders:1,totalSpent:0,lastOrder:'2025-04-09'},
+];
+const DCOUPONS=[
+  {id:'c1',code:'WELCOME10',type:'percent',value:10,minOrder:500,active:true,uses:12,desc:'10% off for new customers'},
+  {id:'c2',code:'FLAT100',type:'flat',value:100,minOrder:1000,active:true,uses:5,desc:'₹100 flat off on orders above ₹1000'},
+  {id:'c3',code:'SUMMER20',type:'percent',value:20,minOrder:800,active:false,uses:0,desc:'Summer sale - 20% off'},
+];
+
+const DPRODS=[
+  {id:1,name:"RG Hammer 2 LB with Handle",cat:"hammer",emoji:"🔨",image:"",price:299,mrp:450,brand:"RG",weight:"2 LB",material:"Carbon Steel",tag:"Best Seller",stock:true,desc:"Heavy duty hammer with wooden handle.",specs:[["Weight","2 LB"],["Material","Carbon Steel"],["Handle","Fitted"],["Brand","RG"]]},
+  {id:2,name:"RG Hammer 5 LB with Handle",cat:"hammer",emoji:"🔨",image:"",price:380,mrp:550,brand:"RG",weight:"5 LB",material:"Carbon Steel",tag:"",stock:true,desc:"Heavy 5 LB hammer for tough jobs.",specs:[["Weight","5 LB"],["Brand","RG"]]},
+  {id:3,name:"RG Pick Axe 1.8 KG",cat:"pickaxe",emoji:"⛏️",image:"",price:380,mrp:550,brand:"RG",weight:"1.8 KG",material:"Alloy Steel",tag:"New",stock:true,desc:"Pick axe for agriculture and demolition.",specs:[["Weight","1.8 KG"],["Colors","Black/Red/Blue"],["Brand","RG"]]},
+  {id:4,name:"RG Pick Axe 3.0 KG",cat:"pickaxe",emoji:"⛏️",image:"",price:520,mrp:750,brand:"RG",weight:"3.0 KG",material:"Alloy Steel",tag:"",stock:true,desc:"Heavy duty 3 KG pick axe.",specs:[["Weight","3.0 KG"],["Brand","RG"]]},
+  {id:5,name:"RG Shovel D-Handle 2.2 KG",cat:"shovel",emoji:"🪣",image:"",price:650,mrp:900,brand:"RG",weight:"2.2 KG",material:"Steel",tag:"Best Seller",stock:true,desc:"Premium RG shovel with D-handle.",specs:[["Weight","2.2 KG"],["Handle","D-Handle"],["Brand","RG"]]},
+  {id:6,name:"RG Crow Bar 25 MM",cat:"crowbar",emoji:"🪛",image:"",price:280,mrp:400,brand:"RG",weight:"2.5 KG",material:"Carbon Steel",tag:"",stock:true,desc:"Solid crow bar for prying and demolition.",specs:[["Size","25 MM"],["Brand","RG"]]},
+  {id:7,name:"RG Powrah 2.5 LB",cat:"powrah",emoji:"🌾",image:"",price:180,mrp:260,brand:"RG",weight:"1.14 KG",material:"Steel",tag:"",stock:true,desc:"Traditional Indian agricultural hoe.",specs:[["Weight","2.5 LB"],["Brand","RG"]]},
+  {id:8,name:"TEZ Rotavator Blade 57 MM",cat:"blade",emoji:"🚜",image:"",price:890,mrp:1200,brand:"TEZ",weight:"Per Set",material:"High Carbon Steel",tag:"Wholesale",stock:true,desc:"Rotavator blades for tractor tillage.",specs:[["Centre","57 MM"],["Hole","14.5 MM"],["Brand","TEZ"]]},
+];
+const DCATS=[
+  {id:"hammer",name:"Hammers",emoji:"🔨"},{id:"pickaxe",name:"Pick Axe",emoji:"⛏️"},
+  {id:"shovel",name:"Shovels",emoji:"🪣"},{id:"crowbar",name:"Crow Bar",emoji:"🪛"},
+  {id:"powrah",name:"Powrah/Hoe",emoji:"🌾"},{id:"blade",name:"Blades",emoji:"🚜"},
+];
+
+const db={products:[],cats:[],store:{},orders:[],customers:[],coupons:[]};
+function save(){
+  try{
+    localStorage.setItem('rg_p',JSON.stringify(db.products));
+    localStorage.setItem('rg_c',JSON.stringify(db.cats));
+    localStorage.setItem('rg_s',JSON.stringify(db.store));
+    localStorage.setItem('rg_o',JSON.stringify(db.orders));
+    localStorage.setItem('rg_cu',JSON.stringify(db.customers));
+    localStorage.setItem('rg_cp',JSON.stringify(db.coupons));
+    document.getElementById('savedAt').textContent='💾 Saved '+new Date().toLocaleTimeString();
+  }catch(e){showToast('⚠️ Storage full! Use image URLs (imgbb.com) instead of uploading photos directly.');}
+}
+function load(){
+  const p=localStorage.getItem('rg_p'),c=localStorage.getItem('rg_c'),s=localStorage.getItem('rg_s');
+  const o=localStorage.getItem('rg_o'),cu=localStorage.getItem('rg_cu'),cp=localStorage.getItem('rg_cp');
+  db.products=p?JSON.parse(p):[...DPRODS];
+  db.cats=c?JSON.parse(c):[...DCATS];
+  db.store=s?JSON.parse(s):{name:'RG Store',tagline:'Quality Agricultural Hand Tools',phone:'7209979197, 9241823652',email:'gope7792@gmail.com',whatsapp:'917209979197',shippingFree:2000};
+  db.orders=o?JSON.parse(o):[...DORDERS];
+  db.customers=cu?JSON.parse(cu):[...DCUSTOMERS];
+  db.coupons=cp?JSON.parse(cp):[...DCOUPONS];
+  db.products.forEach(p=>{if(!('image' in p))p.image='';});
+}
+load();
+
+// ════════ AUTH ════════
+function doLogin(){
+  if(document.getElementById('lu').value==='admin'&&document.getElementById('lp').value==='rg1234'){
+    document.getElementById('loginPage').style.display='none';
+    document.getElementById('app').classList.add('active');
+    go('dashboard');
+  }else showToast('❌ Wrong credentials');
+}
+function doLogout(){document.getElementById('app').classList.remove('active');document.getElementById('loginPage').style.display='block';}
+document.getElementById('lp').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+
+// ════════ NAV ════════
+function go(sec){
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));
+  const allItems=document.querySelectorAll('.sb-item');
+  const map={dashboard:0,products:1,orders:2,customers:3,payments:4,coupons:5,analytics:6,store:7,cats:8};
+  if(allItems[map[sec]])allItems[map[sec]].classList.add('active');
+  const titles={dashboard:'Dashboard',products:'Product Management',orders:'Orders',customers:'Customers',payments:'Payments',coupons:'Coupons & Discounts',analytics:'Analytics & Reports',store:'Store Info',cats:'Categories'};
+  document.getElementById('ttitle').textContent=titles[sec]||sec;
+  const mc=document.getElementById('mc');
+  if(sec==='dashboard')mc.innerHTML=buildDashboard();
+  else if(sec==='products'){mc.innerHTML=buildProductsPage();renderTable();}
+  else if(sec==='orders'){mc.innerHTML=buildOrders();renderOrders();}
+  else if(sec==='customers'){mc.innerHTML=buildCustomers();renderCustomers();}
+  else if(sec==='payments')mc.innerHTML=buildPayments();
+  else if(sec==='coupons')mc.innerHTML=buildCoupons();
+  else if(sec==='analytics')mc.innerHTML=buildAnalytics();
+  else if(sec==='store')mc.innerHTML=buildStore();
+  else if(sec==='cats')mc.innerHTML=buildCats();
+}
+
+// ════════ DASHBOARD ════════
+function buildDashboard(){
+  const t=db.products.length,si=db.products.filter(p=>p.stock).length,wi=db.products.filter(p=>p.image).length,ni=t-wi;
+  const totalOrders=db.orders.length;
+  const pendingOrders=db.orders.filter(o=>o.status==='pending'||o.status==='processing').length;
+  const totalRev=db.orders.filter(o=>o.status!=='cancelled').reduce((s,o)=>s+o.total,0);
+  const totalCust=db.customers.length;
+  return`
+  <div class="stats-row">
+    <div class="stat-card"><div class="si2">📦</div><div class="sv">${t}</div><div class="sl">Total Products</div></div>
+    <div class="stat-card b"><div class="si2">✅</div><div class="sv">${si}</div><div class="sl">In Stock</div></div>
+    <div class="stat-card g"><div class="si2">📋</div><div class="sv">${totalOrders}</div><div class="sl">Total Orders</div></div>
+    <div class="stat-card r"><div class="si2">⏳</div><div class="sv">${pendingOrders}</div><div class="sl">Pending Orders</div></div>
+    <div class="stat-card" style="border-top-color:#6A1B9A"><div class="si2">💰</div><div class="sv" style="font-size:1.2rem">₹${totalRev.toLocaleString()}</div><div class="sl">Total Revenue</div></div>
+    <div class="stat-card" style="border-top-color:#00838F"><div class="si2">👥</div><div class="sv">${totalCust}</div><div class="sl">Customers</div></div>
+  </div>
+  ${ni>0?`<div class="sec-card" style="border-left:4px solid var(--primary)">
+    <div class="sec-head"><h3>📸 Add Real Photos to These Products</h3></div>
+    <div style="padding:16px 20px">
+      <div class="howto" style="margin-bottom:14px">
+        <h4>📱 How to add your product photo (Super Easy!)</h4>
+        <div class="hs"><div class="hn">1</div><div>Open <a href="https://imgbb.com" target="_blank" style="color:var(--blue);font-weight:700">imgbb.com</a> on your phone — it's completely free</div></div>
+        <div class="hs"><div class="hn">2</div><div>Tap <strong>"Start Uploading"</strong> → Select your product photo from gallery</div></div>
+        <div class="hs"><div class="hn">3</div><div>After upload finishes, copy the <strong>"Direct Link"</strong> (looks like https://i.ibb.co/...)</div></div>
+        <div class="hs"><div class="hn">4</div><div>Come back here → Click <strong>"Edit"</strong> on the product → Paste link → Save ✅</div></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        ${db.products.filter(p=>!p.image).map(p=>`<button class="btn btn-o btn-sm" onclick="go('products');setTimeout(()=>openEdit(${p.id}),100)">${p.emoji} ${p.name.slice(0,22)}… → Add Photo</button>`).join('')}
+      </div>
+    </div>
+  </div>`:''}
+  <div class="sec-card">
+    <div class="sec-head"><h3>📋 Recent Orders</h3><button class="btn btn-p btn-sm" onclick="go('orders')">View All</button></div>
+    <div style="overflow-x:auto"><table class="ptable"><thead><tr><th>Order ID</th><th>Customer</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th></th></tr></thead><tbody>
+      ${db.orders.slice(0,5).map(o=>`<tr>
+        <td style="font-weight:700;color:var(--primary)">${o.id}</td>
+        <td><div style="font-weight:600">${o.customer}</div><div class="small">${o.phone}</div></td>
+        <td class="pc">₹${o.total}</td>
+        <td><span style="font-size:.75rem;font-weight:600">${o.payMethod} <span class="ps-badge ps-${o.payStatus}">${o.payStatus}</span></span></td>
+        <td><span class="os-badge os-${o.status}">${o.status.charAt(0).toUpperCase()+o.status.slice(1)}</span></td>
+        <td class="small">${o.date}</td>
+        <td><button class="btn btn-o btn-sm" onclick="viewOrder('${o.id}')">View</button></td>
+      </tr>`).join('')}
+    </tbody></table></div>
+  </div>
+  <div class="sec-card">
+    <div class="sec-head"><h3>⚡ Quick Actions</h3></div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;padding:16px">
+      <button class="btn btn-p" onclick="go('products');setTimeout(openAdd,100)">➕ Add New Product</button>
+      <button class="btn btn-o" onclick="go('orders')">📋 Manage Orders</button>
+      <button class="btn btn-o" onclick="go('coupons')">🎟️ Add Coupon</button>
+      <button class="btn btn-o" onclick="exportAll()">📥 Export / Backup All Data</button>
+      <button class="btn btn-o" onclick="document.getElementById('ifile').click()">📤 Import Data</button>
+      <input type="file" id="ifile" accept=".json" style="display:none" onchange="importAll(this)">
+    </div>
+  </div>`;
+}
+
+// ════════ PRODUCTS ════════
+let fs='all',fq='',fst='all',fimg='all',selIds=new Set();
+
+function buildProductsPage(){
+  return`<div class="sec-card">
+    <div class="sec-head">
+      <h3>All Products (${db.products.length})</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-o btn-sm" onclick="exportAll()">📥 Export</button>
+        <button class="btn btn-o btn-sm" onclick="document.getElementById('ifile2').click()">📤 Import</button>
+        <input type="file" id="ifile2" accept=".json" style="display:none" onchange="importAll(this)">
+        <button class="btn btn-p" onclick="openAdd()">➕ Add Product</button>
+      </div>
+    </div>
+    <div class="bulk-bar" id="bbar">
+      <span id="bcnt">0 selected</span>
+      <button onclick="bulkStock(true)">✅ In Stock</button>
+      <button onclick="bulkStock(false)">❌ Out</button>
+      <button onclick="bulkDel()" style="background:rgba(255,80,80,.3)">🗑 Delete</button>
+      <button onclick="clearSel()" style="margin-left:auto">✕ Cancel</button>
+    </div>
+    <div class="fbar">
+      <input placeholder="🔍 Search…" oninput="af('q',this.value)">
+      <select onchange="af('cat',this.value)">
+        <option value="all">All Categories</option>
+        ${db.cats.map(c=>`<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('')}
+      </select>
+      <select onchange="af('st',this.value)"><option value="all">All Stock</option><option value="in">In Stock</option><option value="out">Out</option></select>
+      <select onchange="af('img',this.value)"><option value="all">All</option><option value="yes">✅ Has Photo</option><option value="no">⚠️ No Photo</option></select>
+    </div>
+    <div style="overflow-x:auto"><table class="ptable"><thead><tr>
+      <th><input type="checkbox" id="saAll" onclick="selAll(this.checked)"></th>
+      <th>Photo</th><th>Product</th><th>Price</th><th>MRP</th><th>Off</th><th>Category</th><th>Stock</th><th>Actions</th>
+    </tr></thead><tbody id="ptbody"></tbody></table></div>
+  </div>`;
+}
+
+function af(t,v){if(t==='q')fq=v.toLowerCase();if(t==='cat')fs=v;if(t==='st')fst=v;if(t==='img')fimg=v;renderTable();}
+
+function renderTable(){
+  let list=db.products.filter(p=>{
+    if(fs!=='all'&&p.cat!==fs)return false;
+    if(fst==='in'&&!p.stock)return false;
+    if(fst==='out'&&p.stock)return false;
+    if(fimg==='yes'&&!p.image)return false;
+    if(fimg==='no'&&p.image)return false;
+    if(fq&&!p.name.toLowerCase().includes(fq)&&!p.brand.toLowerCase().includes(fq))return false;
+    return true;
+  });
+  const tb=document.getElementById('ptbody');
+  if(!tb)return;
+  if(!list.length){tb.innerHTML='<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text3)">No products found</td></tr>';return;}
+  tb.innerHTML=list.map(p=>{
+    const d=Math.round((p.mrp-p.price)/p.mrp*100);
+    return`<tr>
+      <td><input type="checkbox" class="rcb" value="${p.id}" onchange="toggleSel(${p.id},this.checked)" ${selIds.has(p.id)?'checked':''}></td>
+      <td>${p.image
+        ?`<img src="${p.image}" class="tbl-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="tbl-ph" style="display:none">${p.emoji}</div>`
+        :`<div class="tbl-ph">${p.emoji}</div>`}
+      </td>
+      <td>
+        <div class="pname">${p.name} <span class="btag">${p.brand}</span></div>
+        <div class="small mt4">${p.image?'<span class="hi-badge">✅ Photo</span>':'<span class="ni-badge">⚠️ No Photo — click Edit to add</span>'}</div>
+      </td>
+      <td class="pc">₹${p.price}</td>
+      <td style="color:var(--text3);text-decoration:line-through;font-size:.82rem">₹${p.mrp}</td>
+      <td style="color:var(--green);font-weight:700;font-size:.8rem">${d}%</td>
+      <td><span class="cb">${p.cat}</span></td>
+      <td><button onclick="toggleStock(${p.id})" class="sb ${p.stock?'si-badge':'so-badge'}" style="border:none;cursor:pointer;padding:4px 10px">${p.stock?'✅ In':'❌ Out'}</button></td>
+      <td><div style="display:flex;gap:6px">
+        <button class="btn btn-o btn-sm" onclick="openEdit(${p.id})">✏️ Edit</button>
+        <button class="btn btn-d btn-sm" onclick="confirmDel(${p.id})">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleSel(id,c){if(c)selIds.add(id);else selIds.delete(id);updBulk();}
+function selAll(c){document.querySelectorAll('.rcb').forEach(cb=>{cb.checked=c;c?selIds.add(parseInt(cb.value)):selIds.delete(parseInt(cb.value));});updBulk();}
+function updBulk(){const b=document.getElementById('bbar');if(!b)return;selIds.size>0?(b.classList.add('show'),document.getElementById('bcnt').textContent=selIds.size+' selected'):b.classList.remove('show');}
+function clearSel(){selIds.clear();document.querySelectorAll('.rcb').forEach(cb=>cb.checked=false);const s=document.getElementById('saAll');if(s)s.checked=false;updBulk();}
+function bulkStock(v){db.products.forEach(p=>{if(selIds.has(p.id))p.stock=v;});save();clearSel();renderTable();showToast('Updated');}
+function bulkDel(){confirm2('Delete selected?','',()=>{db.products=db.products.filter(p=>!selIds.has(p.id));save();clearSel();renderTable();showToast('Deleted');});}
+function toggleStock(id){const p=db.products.find(x=>x.id===id);if(p){p.stock=!p.stock;save();renderTable();showToast(p.stock?'✅ In Stock':'❌ Out of Stock');}}
+
+// ════════ IMAGE ════════
+let curImg='';
+
+function buildImgBox(existing){
+  curImg=existing||'';
+  const box=document.getElementById('imgbox');
+  if(!box)return;
+  if(existing){
+    showImgPreview(existing);
+  }else{
+    box.classList.remove('has-img');
+    box.innerHTML=`
+      <div class="img-title">📸 Add Your Product Photo</div>
+      <div class="img-sub">Real photos help customers trust your product more!</div>
+      <div class="img-methods">
+        <button class="img-mbtn" onclick="document.getElementById('imgfile').click()">📱 Upload Photo from Phone</button>
+        <button class="img-mbtn" onclick="toggleUrl()">🔗 Paste Image Link</button>
+      </div>
+      <input type="file" id="imgfile" accept="image/*" style="display:none" onchange="handleFile(this)">
+      <div class="url-wrap" id="urlwrap">
+        <div style="margin:10px 0 6px;font-size:.8rem;color:var(--text2);font-weight:600;">Paste your imgbb.com link below:</div>
+        <div class="url-row">
+          <input id="urlInput" placeholder="https://i.ibb.co/your-image-link…">
+          <button onclick="applyUrl()">Apply ✓</button>
+        </div>
+      </div>
+      <div class="howto">
+        <h4>📱 Free image link in 3 steps:</h4>
+        <div class="hs"><div class="hn">1</div><div>Go to <a href="https://imgbb.com" target="_blank" style="color:var(--blue);font-weight:700">imgbb.com</a> (free, no signup needed)</div></div>
+        <div class="hs"><div class="hn">2</div><div>Upload your product photo → After upload, copy the <strong>Direct Link</strong></div></div>
+        <div class="hs"><div class="hn">3</div><div>Click <strong>"🔗 Paste Image Link"</strong> above and paste it</div></div>
+      </div>
+    `;
+  }
+}
+
+function showImgPreview(src){
+  const box=document.getElementById('imgbox');
+  if(!box)return;
+  box.classList.add('has-img');
+  box.innerHTML=`
+    <img src="${src}" class="img-preview" onerror="this.src=''">
+    <div style="color:var(--green);font-weight:700;font-size:.9rem;margin-bottom:10px">✅ Photo ready!</div>
+    <button class="img-remove-btn" onclick="removeImg()">✕ Remove Photo</button>
+    <div class="img-methods">
+      <button class="img-mbtn" onclick="document.getElementById('imgfile2').click()">📱 Change Photo</button>
+      <button class="img-mbtn" onclick="toggleUrl()">🔗 Change Link</button>
+    </div>
+    <input type="file" id="imgfile2" accept="image/*" style="display:none" onchange="handleFile(this)">
+    <div class="url-wrap" id="urlwrap">
+      <div class="url-row" style="margin-top:10px">
+        <input id="urlInput" placeholder="Paste new image link…" value="${src.startsWith('http')?src:''}">
+        <button onclick="applyUrl()">Apply</button>
+      </div>
+    </div>
+  `;
+}
+
+function handleFile(input){
+  const file=input.files[0];
+  if(!file)return;
+  if(file.size>2.5*1024*1024){showToast('⚠️ Photo too large (max 2.5MB). Please use imgbb.com link instead — it\'s easier and unlimited!');return;}
+  const r=new FileReader();
+  r.onload=e=>{curImg=e.target.result;showImgPreview(curImg);showToast('✅ Photo loaded!');};
+  r.readAsDataURL(file);
+}
+
+function toggleUrl(){const w=document.getElementById('urlwrap');if(w)w.classList.toggle('open');}
+
+function applyUrl(){
+  const url=document.getElementById('urlInput').value.trim();
+  if(!url){showToast('Paste an image link first');return;}
+  const img=new Image();
+  img.onload=()=>{curImg=url;showImgPreview(url);showToast('✅ Image applied!');};
+  img.onerror=()=>showToast('❌ Could not load this image link. Make sure it\'s a direct image URL ending in .jpg or .png');
+  img.src=url;
+}
+
+function removeImg(){curImg='';buildImgBox('');}
+
+// ════════ ADD/EDIT FORM ════════
+let editId=null;
+
+function openAdd(){
+  editId=null;
+  document.getElementById('ftitle').innerHTML='Add New Product <button class="xbtn" onclick="closeForm()">×</button>';
+  buildForm(null);
+  document.getElementById('fov').classList.add('open');
+}
+
+function openEdit(id){
+  editId=id;
+  const p=db.products.find(x=>x.id===id);
+  document.getElementById('ftitle').innerHTML=`Edit Product <button class="xbtn" onclick="closeForm()">×</button>`;
+  buildForm(p);
+  document.getElementById('fov').classList.add('open');
+}
+
+function closeForm(){document.getElementById('fov').classList.remove('open');}
+
+function buildForm(p){
+  document.getElementById('fbody').innerHTML=`
+    <div style="background:#f9f9f9;border-radius:8px;padding:16px;margin-bottom:18px">
+      <div style="font-weight:700;font-size:.9rem;margin-bottom:12px">🖼️ Product Photo ${p&&p.image?'<span class="hi-badge">✅ Has Photo</span>':'<span class="ni-badge">⚠️ No Photo Yet</span>'}</div>
+      <div id="imgbox" class="img-box"></div>
+    </div>
+    <div class="fg"><label>Product Name *</label><input id="fn" placeholder="e.g. RG Hammer 2 LB with Handle" value="${p?p.name:''}"></div>
+    <div class="fr2">
+      <div class="fg"><label>Brand *</label><input id="fb" placeholder="RG or TEZ" value="${p?p.brand:'RG'}"></div>
+      <div class="fg"><label>Category *</label><select id="fc">${db.cats.map(c=>`<option value="${c.id}" ${p&&p.cat===c.id?'selected':''}>${c.emoji} ${c.name}</option>`).join('')}</select></div>
+    </div>
+    <div class="fr3">
+      <div class="fg"><label>Sale Price ₹ *</label><input id="fp" type="number" placeholder="299" value="${p?p.price:''}" oninput="updPP()"></div>
+      <div class="fg"><label>MRP ₹ *</label><input id="fm" type="number" placeholder="450" value="${p?p.mrp:''}" oninput="updPP()"></div>
+      <div class="fg"><label>Stock</label><select id="fst2"><option value="true" ${!p||p.stock?'selected':''}>✅ In Stock</option><option value="false" ${p&&!p.stock?'selected':''}>❌ Out</option></select></div>
+    </div>
+    <div class="pp" id="pp">
+      <div class="ppi"><div class="ppv" id="pppr">-</div><div class="ppl">Sale Price</div></div>
+      <div class="ppi"><div class="ppv" id="ppmp" style="color:var(--text3);text-decoration:line-through;font-size:.95rem">-</div><div class="ppl">MRP</div></div>
+      <div class="ppi"><div class="ppv" id="ppd" style="color:var(--green)">-</div><div class="ppl">Discount</div></div>
+      <div class="ppi"><div class="ppv" id="pps">-</div><div class="ppl">Customer Saves</div></div>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label>Weight / Size</label><input id="fw" placeholder="e.g. 2 LB" value="${p?p.weight||'':''}"></div>
+      <div class="fg"><label>Material</label><input id="fmat" placeholder="e.g. Carbon Steel" value="${p?p.material||'':''}"></div>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label>Badge Tag</label><select id="ftg"><option value="">None</option><option value="Best Seller" ${p&&p.tag==='Best Seller'?'selected':''}>Best Seller</option><option value="New" ${p&&p.tag==='New'?'selected':''}>New</option><option value="Wholesale" ${p&&p.tag==='Wholesale'?'selected':''}>Wholesale</option><option value="Hot" ${p&&p.tag==='Hot'?'selected':''}>Hot</option></select></div>
+      <div class="fg"><label>Emoji (if no photo)</label><select id="fe">${['🔨','⛏️','🪣','🪛','🌾','🔧','🚜','🌿','🔩','⚙️','📦'].map(e=>`<option value="${e}" ${p&&p.emoji===e?'selected':''}>${e}</option>`).join('')}</select></div>
+    </div>
+    <div class="fg"><label>Product Description</label><textarea id="fd" placeholder="Describe the product…">${p?p.desc||'':''}</textarea></div>
+    <div class="fg">
+      <label>Specifications</label>
+      <div class="specs-list" id="specs">
+        ${(p&&p.specs?p.specs:[['','']]).map(s=>`<div class="spec-row"><input placeholder="Label e.g. Weight" value="${s[0]}" class="sk"><input placeholder="Value e.g. 2 LB" value="${s[1]}" class="sv"><button class="sr-btn" onclick="rmSpec(this)">✕</button></div>`).join('')}
+      </div>
+      <button class="add-spec" onclick="addSpec()">＋ Add Specification Row</button>
+    </div>
+    <div class="factions">
+      <button class="btn btn-o" onclick="closeForm()">Cancel</button>
+      <button class="btn btn-p" onclick="saveProd()">💾 ${p?'Update':'Add Product'}</button>
+    </div>
+  `;
+  setTimeout(()=>buildImgBox(p?p.image||'':''),10);
+  if(p)updPP();
+}
+
+function updPP(){
+  const pr=parseFloat(document.getElementById('fp').value);
+  const mr=parseFloat(document.getElementById('fm').value);
+  const pp=document.getElementById('pp');
+  if(!pp)return;
+  if(pr&&mr&&mr>pr){
+    pp.classList.add('show');
+    const d=Math.round((mr-pr)/mr*100);
+    document.getElementById('pppr').textContent='₹'+pr;
+    document.getElementById('ppmp').textContent='₹'+mr;
+    document.getElementById('ppd').textContent=d+'% OFF';
+    document.getElementById('pps').textContent='₹'+(mr-pr);
+  }else pp.classList.remove('show');
+}
+
+function addSpec(){const l=document.getElementById('specs');const d=document.createElement('div');d.className='spec-row';d.innerHTML=`<input placeholder="Label" class="sk"><input placeholder="Value" class="sv"><button class="sr-btn" onclick="rmSpec(this)">✕</button>`;l.appendChild(d);}
+function rmSpec(b){const r=document.querySelectorAll('.spec-row');if(r.length<=1){showToast('Keep at least one row');return;}b.parentElement.remove();}
+
+function saveProd(){
+  const name=document.getElementById('fn').value.trim();
+  const brand=document.getElementById('fb').value.trim();
+  const price=parseFloat(document.getElementById('fp').value);
+  const mrp=parseFloat(document.getElementById('fm').value);
+  const cat=document.getElementById('fc').value;
+  if(!name||!brand||!price||!mrp||!cat){showToast('⚠️ Fill all required fields (*)');return;}
+  if(price>=mrp){showToast('⚠️ Sale price must be less than MRP');return;}
+  const specs=[];
+  document.querySelectorAll('.spec-row').forEach(r=>{const k=r.querySelector('.sk').value.trim();const v=r.querySelector('.sv').value.trim();if(k&&v)specs.push([k,v]);});
+  const prod={
+    id:editId||Date.now(),name,brand,price,mrp,cat,
+    image:curImg,
+    emoji:document.getElementById('fe').value,
+    weight:document.getElementById('fw').value.trim(),
+    material:document.getElementById('fmat').value.trim(),
+    tag:document.getElementById('ftg').value,
+    stock:document.getElementById('fst2').value==='true',
+    desc:document.getElementById('fd').value.trim(),
+    specs,
+    rating:editId?db.products.find(x=>x.id===editId)?.rating||4.5:4.5,
+    reviews:editId?db.products.find(x=>x.id===editId)?.reviews||0:0,
+  };
+  if(editId){const i=db.products.findIndex(x=>x.id===editId);db.products[i]=prod;showToast('✅ Product updated!');}
+  else{db.products.unshift(prod);showToast('✅ Product added!');}
+  save();closeForm();renderTable();
+}
+
+function confirmDel(id){const p=db.products.find(x=>x.id===id);confirm2(`Delete "${p.name}"?`,'Cannot be undone.',()=>{db.products=db.products.filter(x=>x.id!==id);save();renderTable();showToast('🗑 Deleted');});}
+
+// ════════ ORDERS ════════
+let oFilter='all',oSearch='';
+function buildOrders(){
+  return`<div class="sec-card">
+    <div class="sec-head">
+      <h3>All Orders (${db.orders.length})</h3>
+      <button class="btn btn-p" onclick="openAddOrder()">➕ Add Order</button>
+    </div>
+    <div class="fbar">
+      <input placeholder="🔍 Search by name, phone, order ID…" oninput="oSearch=this.value.toLowerCase();renderOrders()" style="flex:1;min-width:180px">
+      <select onchange="oFilter=this.value;renderOrders()">
+        <option value="all">All Status</option>
+        <option value="pending">Pending</option>
+        <option value="processing">Processing</option>
+        <option value="shipped">Shipped</option>
+        <option value="delivered">Delivered</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+    <div style="overflow-x:auto"><table class="ptable"><thead><tr>
+      <th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th>Actions</th>
+    </tr></thead><tbody id="otbody"></tbody></table></div>
+  </div>`;
+}
+function renderOrders(){
+  let list=db.orders.filter(o=>{
+    if(oFilter!=='all'&&o.status!==oFilter)return false;
+    if(oSearch&&!o.id.toLowerCase().includes(oSearch)&&!o.customer.toLowerCase().includes(oSearch)&&!o.phone.includes(oSearch))return false;
+    return true;
+  });
+  const tb=document.getElementById('otbody');
+  if(!tb)return;
+  tb.innerHTML=list.length?list.map(o=>`<tr>
+    <td style="font-weight:700;color:var(--primary);white-space:nowrap">${o.id}</td>
+    <td><div style="font-weight:600">${o.customer}</div><div class="small">${o.phone}</div></td>
+    <td class="small">${o.items.map(i=>i.name.slice(0,18)+'…').join(', ')}</td>
+    <td class="pc">₹${o.total}</td>
+    <td>
+      <div style="font-size:.78rem;font-weight:600">${o.payMethod}</div>
+      <span class="ps-badge ps-${o.payStatus}">${o.payStatus}</span>
+    </td>
+    <td>
+      <select class="btn btn-o btn-sm" style="border-radius:20px;font-weight:700" onchange="changeOrderStatus('${o.id}',this.value)">
+        ${['pending','processing','shipped','delivered','cancelled'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+      </select>
+    </td>
+    <td class="small" style="white-space:nowrap">${o.date}</td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-o btn-sm" onclick="viewOrder('${o.id}')">👁 View</button>
+      <button class="btn btn-d btn-sm" onclick="deleteOrder('${o.id}')">🗑</button>
+    </td>
+  </tr>`).join(''):`<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text3)">No orders found</td></tr>`;
+}
+
+function changeOrderStatus(id,status){
+  const o=db.orders.find(x=>x.id===id);
+  if(o){o.status=status;save();showToast('✅ Order status updated to: '+status);}
+}
+function deleteOrder(id){
+  confirm2('Delete Order '+id+'?','This cannot be undone.',()=>{
+    db.orders=db.orders.filter(o=>o.id!==id);save();go('orders');showToast('🗑 Order deleted');
+  });
+}
+
+function viewOrder(id){
+  const o=db.orders.find(x=>x.id===id);
+  if(!o)return;
+  const steps=['pending','processing','shipped','delivered'];
+  const ci=steps.indexOf(o.status);
+  const timeline=o.status==='cancelled'
+    ?`<div class="tl-step"><div class="tl-dot" style="background:var(--red);color:#fff">✕</div><div class="tl-info"><strong>Order Cancelled</strong><span>This order was cancelled</span></div></div>`
+    :steps.map((s,i)=>`<div class="tl-step">
+        <div class="tl-dot ${i<ci?'done':i===ci?'active':'idle'}">${i<ci?'✓':i+1}</div>
+        <div class="tl-info"><strong>${s.charAt(0).toUpperCase()+s.slice(1)}</strong><span>${i<=ci?'Completed':'Pending'}</span></div>
+      </div>`).join('<div class="tl-line"></div>');
+  openModal(`Order ${o.id}`,`
+    <div class="od-section">
+      <h4>📦 Order Status</h4>
+      <div class="timeline">${timeline}</div>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        ${['pending','processing','shipped','delivered','cancelled'].map(s=>`<button class="btn ${o.status===s?'btn-p':'btn-o'} btn-sm" onclick="changeOrderStatus('${o.id}','${s}');viewOrder('${o.id}')">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`).join('')}
+      </div>
+    </div>
+    <div class="od-section">
+      <h4>👤 Customer Details</h4>
+      <div class="od-row"><span>Name</span><span><strong>${o.customer}</strong></span></div>
+      <div class="od-row"><span>Phone</span><span>${o.phone}</span></div>
+      ${o.email?`<div class="od-row"><span>Email</span><span>${o.email}</span></div>`:''}
+      <div class="od-row"><span>Address</span><span style="max-width:260px;text-align:right">${o.address}</span></div>
+      <div style="margin-top:8px;display:flex;gap:8px">
+        <a href="tel:${o.phone}" class="btn btn-o btn-sm">📞 Call</a>
+        <a href="https://wa.me/91${o.phone}?text=Regarding your order ${o.id}" target="_blank" class="btn btn-p btn-sm">💬 WhatsApp</a>
+      </div>
+    </div>
+    <div class="od-section">
+      <h4>🛒 Items Ordered</h4>
+      <table class="ptable" style="margin-top:4px">
+        <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Subtotal</th></tr></thead>
+        <tbody>${o.items.map(i=>`<tr><td>${i.name}</td><td>${i.qty}</td><td>₹${i.price}</td><td class="pc">₹${i.qty*i.price}</td></tr>`).join('')}</tbody>
+      </table>
+      <div style="margin-top:10px">
+        <div class="od-row"><span>Subtotal</span><span>₹${o.subtotal}</span></div>
+        ${o.shipping>0?`<div class="od-row"><span>Shipping</span><span>₹${o.shipping}</span></div>`:'<div class="od-row"><span>Shipping</span><span style="color:var(--green)">FREE</span></div>'}
+        ${o.discount>0?`<div class="od-row"><span>Discount</span><span style="color:var(--green)">-₹${o.discount}</span></div>`:''}
+        <div class="od-row od-total"><span>Total</span><span>₹${o.total}</span></div>
+      </div>
+    </div>
+    <div class="od-section">
+      <h4>💳 Payment</h4>
+      <div class="od-row"><span>Method</span><span><strong>${o.payMethod}</strong></span></div>
+      <div class="od-row"><span>Status</span><span><span class="ps-badge ps-${o.payStatus}">${o.payStatus}</span></span></div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn btn-o btn-sm" onclick="markPayment('${o.id}','paid');viewOrder('${o.id}')">✅ Mark Paid</button>
+        <button class="btn btn-o btn-sm" onclick="markPayment('${o.id}','pending');viewOrder('${o.id}')">⏳ Mark Pending</button>
+        <button class="btn btn-o btn-sm" onclick="markPayment('${o.id}','refunded');viewOrder('${o.id}')">↩️ Refunded</button>
+      </div>
+    </div>
+    ${o.note?`<div class="od-section"><h4>📝 Note</h4><p style="font-size:.88rem;color:var(--text2)">${o.note}</p></div>`:''}
+  `);
+}
+
+function markPayment(id,status){
+  const o=db.orders.find(x=>x.id===id);
+  if(o){o.payStatus=status;save();showToast('✅ Payment marked as '+status);}
+}
+
+function openAddOrder(){
+  openModal('Add New Order',`
+    <div class="fr2">
+      <div class="fg"><label>Customer Name *</label><input id="oc-name" placeholder="Full name"></div>
+      <div class="fg"><label>Phone *</label><input id="oc-phone" placeholder="10-digit number"></div>
+    </div>
+    <div class="fr2">
+      <div class="fg"><label>Email</label><input id="oc-email" placeholder="optional"></div>
+      <div class="fg"><label>City</label><input id="oc-city" placeholder="City"></div>
+    </div>
+    <div class="fg"><label>Full Address *</label><textarea id="oc-addr" rows="2" placeholder="House/shop no, street, city, pincode"></textarea></div>
+    <div class="fg"><label>Items (one per line: Name | Qty | Price)</label><textarea id="oc-items" rows="3" placeholder="RG Hammer 2LB | 2 | 299&#10;RG Shovel | 1 | 650"></textarea></div>
+    <div class="fr3">
+      <div class="fg"><label>Shipping (₹)</label><input id="oc-ship" type="number" value="0"></div>
+      <div class="fg"><label>Discount (₹)</label><input id="oc-disc" type="number" value="0"></div>
+      <div class="fg"><label>Payment Method</label><select id="oc-pm"><option>COD</option><option>UPI</option><option>Card</option><option>NetBanking</option></select></div>
+    </div>
+    <div class="fg"><label>Note</label><input id="oc-note" placeholder="Any special note"></div>
+    <div class="factions"><button class="btn btn-o" onclick="closeForm()">Cancel</button><button class="btn btn-p" onclick="saveNewOrder()">💾 Save Order</button></div>
+  `);
+}
+
+function saveNewOrder(){
+  const name=document.getElementById('oc-name').value.trim();
+  const phone=document.getElementById('oc-phone').value.trim();
+  const addr=document.getElementById('oc-addr').value.trim();
+  const itemsRaw=document.getElementById('oc-items').value.trim();
+  if(!name||!phone||!addr||!itemsRaw){showToast('⚠️ Fill all required fields');return;}
+  const items=itemsRaw.split('\n').map(l=>{const p=l.split('|');return{name:(p[0]||'').trim(),qty:parseInt(p[1])||1,price:parseFloat(p[2])||0};}).filter(i=>i.name);
+  const subtotal=items.reduce((s,i)=>s+i.qty*i.price,0);
+  const ship=parseFloat(document.getElementById('oc-ship').value)||0;
+  const disc=parseFloat(document.getElementById('oc-disc').value)||0;
+  const order={
+    id:'RGO-'+Date.now().toString().slice(-4),
+    customer:name,phone,email:document.getElementById('oc-email').value.trim(),
+    address:addr+', '+(document.getElementById('oc-city').value.trim()||''),
+    items,subtotal,shipping:ship,discount:disc,total:subtotal+ship-disc,
+    payMethod:document.getElementById('oc-pm').value,payStatus:'pending',
+    status:'pending',date:new Date().toISOString().slice(0,10),
+    note:document.getElementById('oc-note').value.trim()
+  };
+  db.orders.unshift(order);save();closeForm();go('orders');showToast('✅ Order added: '+order.id);
+}
+
+// ════════ CUSTOMERS ════════
+let cuSearch='';
+function buildCustomers(){
+  return`<div class="sec-card">
+    <div class="sec-head"><h3>All Customers (${db.customers.length})</h3></div>
+    <div class="fbar"><input placeholder="🔍 Search by name, phone, city…" oninput="cuSearch=this.value.toLowerCase();renderCustomers()" style="flex:1"></div>
+    <div style="overflow-x:auto"><table class="ptable"><thead><tr>
+      <th>Customer</th><th>Phone</th><th>City</th><th>Orders</th><th>Total Spent</th><th>Last Order</th><th>Actions</th>
+    </tr></thead><tbody id="cutbody"></tbody></table></div>
+  </div>`;
+}
+function renderCustomers(){
+  let list=db.customers.filter(c=>{
+    if(!cuSearch)return true;
+    return c.name.toLowerCase().includes(cuSearch)||c.phone.includes(cuSearch)||(c.city||'').toLowerCase().includes(cuSearch);
+  });
+  const tb=document.getElementById('cutbody');if(!tb)return;
+  tb.innerHTML=list.length?list.map(c=>`<tr>
+    <td><div style="display:flex;align-items:center;gap:10px">
+      <div class="cust-av">${c.name[0].toUpperCase()}</div>
+      <div><div style="font-weight:600">${c.name}</div><div class="small">${c.email||'No email'}</div></div>
+    </div></td>
+    <td>${c.phone}</td>
+    <td>${c.city||'—'}</td>
+    <td style="font-weight:700;color:var(--blue)">${c.orders}</td>
+    <td class="pc">₹${c.totalSpent.toLocaleString()}</td>
+    <td class="small">${c.lastOrder||'—'}</td>
+    <td style="white-space:nowrap">
+      <a href="tel:${c.phone}" class="btn btn-o btn-sm">📞</a>
+      <a href="https://wa.me/91${c.phone}" target="_blank" class="btn btn-p btn-sm">💬</a>
+      <button class="btn btn-d btn-sm" onclick="deleteCust('${c.id}')">🗑</button>
+    </td>
+  </tr>`).join(''):`<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text3)">No customers found</td></tr>`;
+}
+function deleteCust(id){
+  confirm2('Delete customer?','Their order history stays.',()=>{
+    db.customers=db.customers.filter(c=>c.id!==id);save();go('customers');showToast('🗑 Customer removed');
+  });
+}
+
+// ════════ PAYMENTS ════════
+function buildPayments(){
+  const paid=db.orders.filter(o=>o.payStatus==='paid');
+  const pending=db.orders.filter(o=>o.payStatus==='pending'&&o.status!=='cancelled');
+  const totalPaid=paid.reduce((s,o)=>s+o.total,0);
+  const totalPending=pending.reduce((s,o)=>s+o.total,0);
+  return`
+  <div class="rev-summary">
+    <div class="rev-card"><div style="font-size:1.4rem">💰</div><div class="rv">₹${totalPaid.toLocaleString()}</div><div class="rl">Collected</div></div>
+    <div class="rev-card"><div style="font-size:1.4rem">⏳</div><div class="rv" style="color:var(--primary)">₹${totalPending.toLocaleString()}</div><div class="rl">Pending (COD)</div></div>
+    <div class="rev-card"><div style="font-size:1.4rem">📋</div><div class="rv" style="color:var(--blue)">${db.orders.length}</div><div class="rl">Total Orders</div></div>
+    <div class="rev-card"><div style="font-size:1.4rem">✅</div><div class="rv" style="color:var(--green)">${paid.length}</div><div class="rl">Paid Orders</div></div>
+  </div>
+  <div class="sec-card">
+    <div class="sec-head"><h3>💳 All Transactions</h3></div>
+    <div style="overflow-x:auto"><table class="ptable"><thead><tr>
+      <th>Order ID</th><th>Customer</th><th>Amount</th><th>Method</th><th>Pay Status</th><th>Order Status</th><th>Date</th><th>Action</th>
+    </tr></thead><tbody>
+      ${db.orders.map(o=>`<tr>
+        <td style="font-weight:700;color:var(--primary)">${o.id}</td>
+        <td><div style="font-weight:600">${o.customer}</div><div class="small">${o.phone}</div></td>
+        <td class="pc">₹${o.total}</td>
+        <td><span style="font-size:.82rem;font-weight:600">${o.payMethod}</span></td>
+        <td><span class="ps-badge ps-${o.payStatus}">${o.payStatus.charAt(0).toUpperCase()+o.payStatus.slice(1)}</span></td>
+        <td><span class="os-badge os-${o.status}">${o.status.charAt(0).toUpperCase()+o.status.slice(1)}</span></td>
+        <td class="small">${o.date}</td>
+        <td style="white-space:nowrap">
+          ${o.payStatus!=='paid'?`<button class="btn btn-p btn-sm" onclick="markPayment('${o.id}','paid');go('payments')">✅ Mark Paid</button>`:''}
+          ${o.payStatus==='paid'?`<button class="btn btn-o btn-sm" onclick="markPayment('${o.id}','refunded');go('payments')">↩️ Refund</button>`:''}
+        </td>
+      </tr>`).join('')}
+    </tbody></table></div>
+  </div>`;
+}
+
+// ════════ COUPONS ════════
+function buildCoupons(){
+  return`<div class="sec-card">
+    <div class="sec-head"><h3>🎟️ Coupons & Discounts (${db.coupons.length})</h3><button class="btn btn-p" onclick="openCouponForm(-1)">➕ Add Coupon</button></div>
+    <div class="coupon-grid" id="couplist">${renderCouponCards()}</div>
+  </div>`;
+}
+function renderCouponCards(){
+  return db.coupons.map((c,i)=>`
+    <div class="coup-card">
+      <div class="coup-code">${c.code}</div>
+      <div class="coup-desc">${c.desc}</div>
+      <div style="font-size:.82rem;margin-bottom:8px">
+        <strong>${c.type==='percent'?c.value+'% OFF':'₹'+c.value+' OFF'}</strong> &nbsp;·&nbsp; Min order: ₹${c.minOrder}
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span class="coup-badge ${c.active?'':'inactive'}">${c.active?'✅ Active':'❌ Inactive'}</span>
+        <span class="small">Used: ${c.uses}×</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <button class="btn btn-o btn-sm" onclick="openCouponForm(${i})">✏️ Edit</button>
+        <button class="btn ${c.active?'btn-d':'btn-p'} btn-sm" onclick="toggleCoupon(${i})">${c.active?'Deactivate':'Activate'}</button>
+        <button class="btn btn-d btn-sm" onclick="deleteCoupon(${i})">🗑</button>
+      </div>
+    </div>`).join('')||'<p style="color:var(--text3);padding:20px">No coupons yet. Add one!</p>';
+}
+function toggleCoupon(i){db.coupons[i].active=!db.coupons[i].active;save();document.getElementById('couplist').innerHTML=renderCouponCards();showToast(db.coupons[i].active?'✅ Coupon activated':'❌ Coupon deactivated');}
+function deleteCoupon(i){confirm2('Delete coupon '+db.coupons[i].code+'?','',()=>{db.coupons.splice(i,1);save();document.getElementById('couplist').innerHTML=renderCouponCards();showToast('🗑 Deleted');});}
+function openCouponForm(i){
+  const c=i>=0?db.coupons[i]:{code:'',type:'percent',value:'',minOrder:500,active:true,desc:''};
+  openModal(i>=0?'Edit Coupon':'Add Coupon',`
+    <div class="fg"><label>Coupon Code *</label><input id="cp-code" value="${c.code}" placeholder="e.g. SAVE20" style="text-transform:uppercase"></div>
+    <div class="fg"><label>Description</label><input id="cp-desc" value="${c.desc}" placeholder="Short description"></div>
+    <div class="fr2">
+      <div class="fg"><label>Type</label><select id="cp-type"><option value="percent" ${c.type==='percent'?'selected':''}>Percentage (%)</option><option value="flat" ${c.type==='flat'?'selected':''}>Flat Amount (₹)</option></select></div>
+      <div class="fg"><label>Value *</label><input id="cp-val" type="number" value="${c.value}" placeholder="e.g. 10"></div>
+    </div>
+    <div class="fg"><label>Minimum Order Amount (₹)</label><input id="cp-min" type="number" value="${c.minOrder}"></div>
+    <div class="fg"><label>Status</label><select id="cp-active"><option value="true" ${c.active?'selected':''}>Active</option><option value="false" ${!c.active?'selected':''}>Inactive</option></select></div>
+    <div class="factions"><button class="btn btn-o" onclick="closeForm()">Cancel</button><button class="btn btn-p" onclick="saveCoupon(${i})">💾 Save</button></div>
+  `);
+}
+function saveCoupon(i){
+  const code=document.getElementById('cp-code').value.trim().toUpperCase();
+  const val=parseFloat(document.getElementById('cp-val').value);
+  if(!code||!val){showToast('⚠️ Fill all required fields');return;}
+  const coup={code,desc:document.getElementById('cp-desc').value.trim(),type:document.getElementById('cp-type').value,value:val,minOrder:parseFloat(document.getElementById('cp-min').value)||0,active:document.getElementById('cp-active').value==='true',uses:i>=0?db.coupons[i].uses:0};
+  if(i>=0)db.coupons[i]=coup;else db.coupons.push(coup);
+  save();closeForm();document.getElementById('couplist').innerHTML=renderCouponCards();showToast('✅ Coupon saved!');
+}
+
+// ════════ ANALYTICS ════════
+function buildAnalytics(){
+  const delivered=db.orders.filter(o=>o.status==='delivered');
+  const totalRev=delivered.reduce((s,o)=>s+o.total,0);
+  const avgOrder=delivered.length?Math.round(totalRev/delivered.length):0;
+  // top products
+  const pcount={};
+  db.orders.filter(o=>o.status!=='cancelled').forEach(o=>o.items.forEach(i=>{pcount[i.name]=(pcount[i.name]||0)+i.qty;}));
+  const topProds=Object.entries(pcount).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const maxQty=topProds[0]?topProds[0][1]:1;
+  // status breakdown
+  const statuses=['pending','processing','shipped','delivered','cancelled'];
+  const sCounts=statuses.map(s=>({s,n:db.orders.filter(o=>o.status===s).length}));
+  // payment methods
+  const pmethods={};
+  db.orders.forEach(o=>{pmethods[o.payMethod]=(pmethods[o.payMethod]||0)+1;});
+  return`
+  <div class="rev-summary">
+    <div class="rev-card"><div style="font-size:1.4rem">💰</div><div class="rv">₹${totalRev.toLocaleString()}</div><div class="rl">Revenue (Delivered)</div></div>
+    <div class="rev-card"><div style="font-size:1.4rem">🧾</div><div class="rv" style="color:var(--blue)">₹${avgOrder.toLocaleString()}</div><div class="rl">Avg Order Value</div></div>
+    <div class="rev-card"><div style="font-size:1.4rem">📦</div><div class="rv" style="color:var(--green)">${delivered.length}</div><div class="rl">Orders Delivered</div></div>
+    <div class="rev-card"><div style="font-size:1.4rem">👥</div><div class="rv" style="color:var(--primary)">${db.customers.length}</div><div class="rl">Customers</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+    <div class="sec-card"><div class="sec-head"><h3>🏆 Top Selling Products</h3></div>
+      <div style="padding:16px">
+        ${topProds.length?`<div class="an-bar-wrap">${topProds.map(([name,qty])=>`
+          <div class="an-bar-row">
+            <div class="an-bar-label">${name.slice(0,22)}</div>
+            <div class="an-bar-track"><div class="an-bar-fill" style="width:${Math.round(qty/maxQty*100)}%"></div></div>
+            <div class="an-bar-val">${qty} sold</div>
+          </div>`).join('')}</div>`:'<p style="color:var(--text3);font-size:.85rem">No order data yet</p>'}
+      </div>
+    </div>
+    <div class="sec-card"><div class="sec-head"><h3>📊 Order Status Breakdown</h3></div>
+      <div style="padding:16px">
+        <div class="an-bar-wrap">${sCounts.map(({s,n})=>`
+          <div class="an-bar-row">
+            <div class="an-bar-label">${s.charAt(0).toUpperCase()+s.slice(1)}</div>
+            <div class="an-bar-track"><div class="an-bar-fill" style="width:${db.orders.length?Math.round(n/db.orders.length*100):0}%;background:${s==='delivered'?'var(--green)':s==='cancelled'?'var(--red)':s==='shipped'?'#6A1B9A':s==='processing'?'var(--blue)':'var(--primary)'}"></div></div>
+            <div class="an-bar-val">${n} orders</div>
+          </div>`).join('')}</div>
+      </div>
+    </div>
+  </div>
+  <div class="sec-card"><div class="sec-head"><h3>💳 Payment Methods Used</h3></div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;padding:16px">
+      ${Object.entries(pmethods).map(([m,n])=>`<div style="text-align:center;padding:16px 24px;border:1.5px solid var(--border);border-radius:8px">
+        <div style="font-size:1.6rem">${m==='COD'?'💵':m==='UPI'?'📱':m==='Card'?'💳':'🏦'}</div>
+        <div style="font-family:'Baloo 2',sans-serif;font-size:1.4rem;font-weight:800">${n}</div>
+        <div style="font-size:.78rem;color:var(--text3)">${m}</div>
+      </div>`).join('')||'<p style="color:var(--text3)">No data yet</p>'}
+    </div>
+  </div>`;
+}
+
+// ════════ STORE ════════
+function buildStore(){
+  const s=db.store;
+  return`<div class="sec-card"><div class="sec-head"><h3>🏪 Store Info</h3></div>
+  <div style="padding:24px;max-width:600px">
+    <div class="fg"><label>Store Name</label><input id="sn" value="${s.name||''}"></div>
+    <div class="fg"><label>Tagline</label><input id="st" value="${s.tagline||''}"></div>
+    <div class="fr2"><div class="fg"><label>Phone</label><input id="sp" value="${s.phone||''}"></div><div class="fg"><label>Email</label><input id="se" value="${s.email||''}"></div></div>
+    <div class="fg"><label>WhatsApp (with 91 country code)</label><input id="sw" value="${s.whatsapp||''}"></div>
+    <div class="fg"><label>Free Shipping Above (₹)</label><input id="ss" type="number" value="${s.shippingFree||2000}"></div>
+    <button class="btn btn-p" onclick="saveStore()">💾 Save</button>
+  </div></div>`;
+}
+function saveStore(){
+  db.store={name:document.getElementById('sn').value.trim(),tagline:document.getElementById('st').value.trim(),phone:document.getElementById('sp').value.trim(),email:document.getElementById('se').value.trim(),whatsapp:document.getElementById('sw').value.trim(),shippingFree:parseFloat(document.getElementById('ss').value)||2000};
+  save();showToast('✅ Store info saved!');
+}
+
+// ════════ CATEGORIES ════════
+function buildCats(){
+  return`<div class="sec-card"><div class="sec-head"><h3>🏷️ Categories</h3><button class="btn btn-p" onclick="openCatForm(-1)">➕ Add</button></div>
+  <div style="padding:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px" id="catlist">${catCards()}</div></div>`;
+}
+function catCards(){return db.cats.map((c,i)=>`<div style="border:1.5px solid var(--border);border-radius:8px;padding:16px"><div style="font-size:2rem;margin-bottom:6px">${c.emoji}</div><div style="font-weight:700;margin-bottom:2px">${c.name}</div><div style="font-size:.78rem;color:var(--text3);margin-bottom:10px">${db.products.filter(p=>p.cat===c.id).length} products</div><div style="display:flex;gap:6px"><button class="btn btn-o btn-sm" onclick="openCatForm(${i})">✏️</button><button class="btn btn-d btn-sm" onclick="delCat(${i})">🗑</button></div></div>`).join('');}
+function openCatForm(i){const c=i>=0?db.cats[i]:{name:'',id:'',emoji:''};openModal(`${i>=0?'Edit':'Add'} Category`,`<div class="fg"><label>Name</label><input id="cn" value="${c.name}" placeholder="e.g. Sickles"></div><div class="fg"><label>ID (no spaces)</label><input id="ci" value="${c.id}" placeholder="e.g. sickle"></div><div class="fg"><label>Emoji</label><input id="ce" value="${c.emoji}" placeholder="🌾" maxlength="2"></div><button class="btn btn-p" style="width:100%;margin-top:8px" onclick="saveCat(${i})">Save</button>`);}
+function saveCat(i){const n=document.getElementById('cn').value.trim(),id=document.getElementById('ci').value.trim().replace(/\s/g,''),e=document.getElementById('ce').value.trim();if(!n||!id||!e){showToast('Fill all');return;}if(i===-1)db.cats.push({id,name:n,emoji:e});else db.cats[i]={id,name:n,emoji:e};save();closeForm();document.getElementById('catlist').innerHTML=catCards();showToast('✅ Saved');}
+function delCat(i){confirm2('Delete category?','',()=>{db.cats.splice(i,1);save();document.getElementById('catlist').innerHTML=catCards();showToast('Deleted');});}
+
+// ════════ MODAL ════════
+function openModal(title,body){document.getElementById('ftitle').innerHTML=`${title} <button class="xbtn" onclick="closeForm()">×</button>`;document.getElementById('fbody').innerHTML=body;document.getElementById('fov').classList.add('open');}
+function closeModal(){closeForm();}
+
+// ════════ EXPORT/IMPORT ════════
+function exportAll(){const j=JSON.stringify({products:db.products,cats:db.cats,store:db.store,orders:db.orders,customers:db.customers,coupons:db.coupons},null,2);const b=new Blob([j],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='rg-store-backup.json';a.click();showToast('📥 Exported!')}
+function importAll(input){const file=input.files[0];if(!file)return;const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(e.target.result);if(d.products)db.products=d.products;if(d.cats)db.cats=d.cats;if(d.store)db.store=d.store;if(d.orders)db.orders=d.orders;if(d.customers)db.customers=d.customers;if(d.coupons)db.coupons=d.coupons;save();go('dashboard');showToast('✅ Imported!');}catch{showToast('❌ Invalid file');}};r.readAsText(file);input.value='';}
+
+// ════════ CONFIRM ════════
+function confirm2(title,msg,cb){document.getElementById('ctitle').textContent=title;document.getElementById('cmsg').textContent=msg;document.getElementById('cov').classList.add('open');document.getElementById('cok').onclick=()=>{closeCov();cb();};}
+function closeCov(){document.getElementById('cov').classList.remove('open');}
+
+// ════════ TOAST ════════
+let tt;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),3200);}
+
+// INIT
+document.getElementById('fov').addEventListener('click',function(e){if(e.target===this)closeForm();});
+</script>
+</body>
+</html>
